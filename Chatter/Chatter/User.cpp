@@ -1,27 +1,28 @@
 #include "User.h"
 
-Server::User::User()
+ServerNS::User::User()
 {}
 
-Server::User::User(String username, String password)
+ServerNS::User::User(String username, String password)
 	: m_name(username), m_pass(password)
 {}
 
-Server::User::~User()
+ServerNS::User::~User()
 {}
 
-bool Server::User::SetPassword(String newPassword)
+bool ServerNS::User::SetPassword(String newPassword)
 {
 	// Todo: check for password restrictions
 	this->m_pass.assign(newPassword);
+	return true;
 }
 
-String Server::User::GetUsername() const
+String ServerNS::User::GetUsername() const
 {
 	return m_name;
 }
 
-Vector<String> Server::User::GetBunUsers() const
+Vector<String> ServerNS::User::GetBunUsers() const
 {
 	return Vector<String>();
 }

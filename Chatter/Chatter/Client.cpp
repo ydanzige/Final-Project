@@ -11,7 +11,10 @@ Client::~Client()
 
 bool Client::Login(string username, string password)
 {
-	return false;
+	value jsonObj;
+	jsonObj[L"username"] = value::string(wstring(username.begin(), username.end()));
+	jsonObj[L"password"] = value::string(wstring(password.begin(), password.end()));
+	return ExecutePost(jsonObj);
 }
 
 string Client::GetActiveUsers()
@@ -24,14 +27,14 @@ string Client::GetMessage(string fromUser)
 	return string();
 }
 
-void Client::Send(string fromUser, string toUser, string message)
+bool Client::Send(string fromUser, string toUser, string message)
 {
 	value jsonObj;
 	jsonObj[ L"fromUser" ] = value::string(wstring(fromUser.begin(), fromUser.end()));
 	jsonObj[ L"toUser" ] = value::string(wstring(toUser.begin(), toUser.end()));
 	jsonObj[ L"message" ] = value::string(wstring(message.begin(), message.end()));
-
-	sendPostRequest(jsonObj);
+	return ExecutePost(jsonObj);
+	
 }
 
 bool Client::SendAll()
@@ -47,6 +50,25 @@ bool Client::Ban(string username)
 bool Client::Unban(string username)
 {
 	return false;
+}
+
+bool Client::ExecutePost(value jsonObj)
+{
+	try
+	{
+		value jsonRes = sendPostRequest(jsonObj).get();
+		if (jsonRes.has_field(U("ErrorRespond")))
+		{
+			return false;
+		}
+
+	}
+	catch (const std::exception&)
+	{
+		return false;
+	}
+
+	return true;
 }
 
 pplx::task<value> Client::sendPostRequest(value jsonObj)
@@ -71,6 +93,8 @@ pplx::task<value> Client::sendPostRequest(value jsonObj)
 			/* Print bad status code */
 			wcout << L"Server returned returned status code " << response.status_code() << L'.' << std::endl;
 		}
-		return pplx::task_from_result(value());
+		value jsonObj;
+		jsonObj[L"ErrorRespond"] = value::string(U("Error"));
+		return pplx::task_from_result(jsonObj);
 	});
 }

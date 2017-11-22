@@ -22,10 +22,11 @@ public:
 	bool Login(string username, string password);
 	string GetActiveUsers();	
 	string GetMessage(string fromUser);	
-	void Send(string fromUser, string toUser, string message);	
+	bool Send(string fromUser, string toUser, string message);
 	bool SendAll();	
 	bool Ban(string username);		
 	bool Unban(string username);	
+	bool ExecutePost(value json);
 	pplx::task<value> sendPostRequest(value jsonObj);
 };
 
