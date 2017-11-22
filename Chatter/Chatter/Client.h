@@ -13,6 +13,12 @@ public:
 	Client();
 	~Client();
 
-	bool Login(string serverName);
+	bool Login(string serverName, int port, string username);
+	string ActiveUsers();
+	bool Send(string username);
+	bool SendAll();
+	bool Ban(string username);
+	bool Unban(string username);
+
 };
 
