@@ -1,3 +1,4 @@
+#pragma once
 #include <cpprest\asyncrt_utils.h>
 #include <string>
 #include <vector>

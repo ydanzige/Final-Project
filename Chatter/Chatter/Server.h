@@ -1,3 +1,4 @@
+#pragma once
 #include <cpprest\http_listener.h>
 #include <cpprest\json.h>
 #include <cpprest\uri.h>
@@ -96,7 +97,7 @@ void Server::handle_post(http_request message)
 
 REQUEST_ID Server::getId(web::uri)
 {
-	return LOGIN;
+	return REQUEST_ID::LOGIN;
 }
 
 bool Server::HandleLogin(http_request message)
@@ -104,7 +105,7 @@ bool Server::HandleLogin(http_request message)
 	auto body = message.extract_json().get();
 	web::json::value username = body[L"username"];
 	web::json::value password = body[L"password"];
-	m_usrlst.push_back(std::unique_ptr<User>(new User(username.as_string(), password.as_string())));
+	m_usrlst.push_back(std::unique_ptr<ServerNS::User>(new ServerNS::User(username.as_string(), password.as_string())));
 	return true;
 }
 
