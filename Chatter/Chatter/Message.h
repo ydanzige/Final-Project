@@ -1,10 +1,12 @@
 #pragma once
+#include <cpprest\asyncrt_utils.h>
 #include <string>
 #include <ctime>
 #include <time.h>
 #include <stdio.h>
 
-#define String std::string
+using namespace utility;
+#define String utility::string_t 
 
 namespace ServerNS
 {
@@ -14,7 +16,7 @@ namespace ServerNS
 	class Message
 	{
 	public:
-		Message();
+		Message(String from, String content);
 		~Message();
 
 		String GetContent() const;

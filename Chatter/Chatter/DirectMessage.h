@@ -6,7 +6,7 @@ namespace ServerNS
 	class DirectMessage : public Message
 	{
 	public:
-		DirectMessage();
+		DirectMessage(String from, String to, String content);
 		~DirectMessage();
 		bool SendToUser(String);
 	private:

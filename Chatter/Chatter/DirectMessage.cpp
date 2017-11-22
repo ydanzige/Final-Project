@@ -1,6 +1,6 @@
 #include "DirectMessage.h"
 
-ServerNS::DirectMessage::DirectMessage()
+ServerNS::DirectMessage::DirectMessage(String from, String to, String content) : Message(from, content), m_to(to)
 {
 }
 

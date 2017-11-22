@@ -3,6 +3,7 @@
 #include <cpprest\json.h>
 #include <cpprest\uri.h>
 #include <cpprest\asyncrt_utils.h>
+#include "DirectMessage.h"
 #include "Message.h"
 #include "User.h"
 
@@ -21,6 +22,7 @@ enum REQUEST_ID
 	SENT_TO_ALL_USERS,
 	BAN_USER,
 	UNBAN_USER,
+	NONE
 };
 
 class Server
@@ -41,13 +43,13 @@ private:
 	std::vector<std::unique_ptr<ServerNS::User>> m_usrlst;
 	//
 	void handle_post(http_request message);
-	bool HandleLogin(http_request message);
-	bool HandleGetActiveUser(http_request message);
-	bool HandleSendMessages(http_request message);
-	bool HandleGetMessages(http_request message);
-	bool HandleSendToAllUsers(http_request message);
-	bool HandleBanUser(http_request message);
-	bool HandleUnanUser(http_request message);
+	http_response HandleLogin(http_request message);
+	http_response HandleGetActiveUser(http_request message);
+	http_response HandleSendMessages(http_request message);
+	http_response HandleGetMessages(http_request message);
+	http_response HandleSendToAllUsers(http_request message);
+	http_response HandleBanUser(http_request message);
+	http_response HandleUnanUser(http_request message);
 	REQUEST_ID getId(web::uri);
 };
 
@@ -95,21 +97,52 @@ void Server::handle_post(http_request message)
 	}
 }
 
-REQUEST_ID Server::getId(web::uri)
+REQUEST_ID Server::getId(web::uri uri)
 {
-	return REQUEST_ID::LOGIN;
+	if (uri.path().c_str() == L"login")
+	{
+		return REQUEST_ID::LOGIN;
+	}
+	else if (uri.path().c_str() == L"getActiveUser")
+	{
+		return REQUEST_ID::GET_ACTIVE_USERS;
+	}
+	else if (uri.path().c_str() == L"sendMessage")
+	{
+		return REQUEST_ID::SEND_MESSAGES;
+	}
+	else if (uri.path().c_str() == L"getMessage")
+	{
+		return REQUEST_ID::GET_MESSAGES;
+	}
+	else if (uri.path().c_str() == L"sendToAllUsers")
+	{
+		return REQUEST_ID::SENT_TO_ALL_USERS;
+	}
+	else if (uri.path().c_str() == L"banAUser")
+	{
+		return REQUEST_ID::BAN_USER;
+	}
+	else if (uri.path().c_str() == L"unbanAUser")
+	{
+		return REQUEST_ID::UNBAN_USER;
+	}
+	else
+	{
+		return REQUEST_ID::NONE;
+	}
 }
 
-bool Server::HandleLogin(http_request message)
+http_response Server::HandleLogin(http_request message)
 {
 	auto body = message.extract_json().get();
 	web::json::value username = body[L"username"];
 	web::json::value password = body[L"password"];
 	m_usrlst.push_back(std::unique_ptr<ServerNS::User>(new ServerNS::User(username.as_string(), password.as_string())));
-	return true;
+	http_response res(200);
+	return res;
 }
-
-bool Server::HandleGetActiveUser(http_request message)
+http_response Server::HandleGetActiveUser(http_request message)
 {
 	web::json::value obj;
 	web::json::value arr;
@@ -119,26 +152,49 @@ bool Server::HandleGetActiveUser(http_request message)
 		users.push_back(web::json::value(m_usrlst[i]->GetUsername()));
 	}
 	arr.array(users);
-	return true;
+	http_response res(200);
+	res.set_body(arr);
+	return res;
 }
+http_response Server::HandleSendMessages(http_request message)
+{
+	auto body = message.extract_json().get();
+	web::json::value fromusername = body[L"fromusername"];
+	web::json::value tousername = body[L"tousername"];
+	web::json::value massege = body[L"massege"];
 
-bool Server::HandleSendMessages(http_request message)
+	http_response res(500);
+	for (size_t i = 0; i < m_usrlst.size(); i++)
+	{
+		if (m_usrlst[i]->GetUsername() == tousername.as_string())
+		{
+			for (size_t j = 0; i < m_usrlst[i]->GetBunUsers().size(); i++)
+			{
+				if (m_usrlst[i]->GetBunUsers()[j] == fromusername.as_string())
+				{
+					return res;
+				}
+			}
+			m_msglst.push_back(std::unique_ptr<Message>(new DirectMessage(fromusername.to_string(), tousername.to_string(), massege.to_string())));
+			res.set_status_code(200);
+			return res;
+		}
+	}
+	return res;
+}
+http_response Server::HandleGetMessages(http_request message)
 {
 	return true;
 }
-bool Server::HandleGetMessages(http_request message)
+http_response Server::HandleSendToAllUsers(http_request message)
 {
 	return true;
 }
-bool Server::HandleSendToAllUsers(http_request message)
+http_response Server::HandleBanUser(http_request message)
 {
 	return true;
 }
-bool Server::HandleBanUser(http_request message)
-{
-	return true;
-}
-bool Server::HandleUnanUser(http_request message)
+http_response Server::HandleUnanUser(http_request message)
 {
 	return true;
 }
