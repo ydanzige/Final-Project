@@ -16,7 +16,7 @@ Server::~Server()
 
 void Server::handle_post(http_request message)
 {
-	REQUEST_ID id = getId(message.relative_uri());
+	REQUEST_ID id = getId(message.absolute_uri());
 	http_response res(500);
 	switch (id)
 	{
