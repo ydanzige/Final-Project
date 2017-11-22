@@ -1,39 +1,29 @@
 #include <string>
 #include <vector>
 
+#define String std::string 
+#define Vector std::vector 
+
 namespace Server
 {
+	/**
+	Contains user details and bun list of usernames 
+	*/
 	class User
 	{
 	public:
 		User();
+		User(String, String);
 		~User();
 
+		bool SetPassword(String);
+		String GetUsername() const;
+		Vector<String> GetBunUsers() const;
+
 	private:
-		std::string m_name;
-		std::string m_pass;
-		std::vector<std::string> m_bunUserList;
+		String m_name;
+		String m_pass;
+		Vector<String> m_bunUserList;
 	};
-
-	
-
-	class DirectMessage : public Message
-	{
-	public:
-		DirectMessage();
-		~DirectMessage();
-		bool SendToUser(std::string userTo);
-	private:
-		std::string m_to;
-	};
-
-	
-	Message::Message()
-	{
-	}
-
-	Message::~Message()
-	{
-	}
 }
 
