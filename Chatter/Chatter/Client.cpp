@@ -11,19 +11,18 @@ Client::~Client()
 const bool Client::Login(const string &username, const string &password)
 {
 	value jsonObj;
-	jsonObj[L"functionName"] = value::string(U("Login"));
 	jsonObj[L"username"] = value::string(wstring(username.begin(), username.end()));
 	jsonObj[L"password"] = value::string(wstring(password.begin(), password.end()));
-	return ExecutePost(jsonObj);
+	return ExecutePost(jsonObj, "Login");
 }
 
 void Client::GetActiveUsers()
 {
 	value jsonObj;
-	jsonObj[L"functionName"] = value::string(U("GetActiveUsers"));	
+	
 	try
 	{
-		value jsonRes = sendPostRequest(jsonObj).get();
+		value jsonRes = sendPostRequest(jsonObj,"GetActiveUsers").get();
 		if (!jsonRes.has_field(U("ErrorRespond")))
 		{
 			Print(jsonRes);
@@ -38,13 +37,12 @@ void Client::GetActiveUsers()
 void Client::GetMessage(const string &fromUser)
 {
 	value jsonObj;
-	jsonObj[L"functionName"] = value::string(U("GetMessage"));
 	jsonObj[L"fromUser"] = value::string(wstring(fromUser.begin(), fromUser.end()));
 	while (true)
 	{
 		try
 		{
-			value jsonRes = sendPostRequest(jsonObj).get();
+			value jsonRes = sendPostRequest(jsonObj, "GetMessage").get();
 			if (!jsonRes.has_field(U("ErrorRespond")))
 			{
 				Print(jsonRes);
@@ -61,45 +59,41 @@ void Client::GetMessage(const string &fromUser)
 const bool Client::Send(const string &fromUser, const string &toUser, const string &message)
 {
 	value jsonObj;
-	jsonObj[L"functionName"] = value::string(U("Send"));
 	jsonObj[ L"fromUser" ] = value::string(wstring(fromUser.begin(), fromUser.end()));
 	jsonObj[ L"toUser" ] = value::string(wstring(toUser.begin(), toUser.end()));
 	jsonObj[ L"message" ] = value::string(wstring(message.begin(), message.end()));
-	return ExecutePost(jsonObj);	
+	return ExecutePost(jsonObj, "Send");
 }
 
 const bool Client::SendToAllUsers(const string &fromUser, const string &message)
 {
 	value jsonObj;
-	jsonObj[L"functionName"] = value::string(U("SendToAllUsers"));
 	jsonObj[L"fromUser"] = value::string(wstring(fromUser.begin(), fromUser.end()));
 	jsonObj[L"message"] = value::string(wstring(message.begin(), message.end()));
-	return ExecutePost(jsonObj);
+	return ExecutePost(jsonObj, "SendToAllUsers");
 }
 
 const bool Client::Ban(const string &fromUser, const string &toUser)
 {
 	value jsonObj;
-	jsonObj[L"functionName"] = value::string(U("banAUser"));
 	jsonObj[L"fromUser"] = value::string(wstring(fromUser.begin(), fromUser.end()));
 	jsonObj[L"toUser"] = value::string(wstring(toUser.begin(), toUser.end()));
-	return ExecutePost(jsonObj);
+	return ExecutePost(jsonObj, "banAUser");
 }
 
 const bool Client::Unban(const string &fromUser, const string &toUser)
 {
 	value jsonObj;
-	jsonObj[L"functionName"] = value::string(U("unbanAUser"));
 	jsonObj[L"fromUser"] = value::string(wstring(fromUser.begin(), fromUser.end()));
 	jsonObj[L"toUser"] = value::string(wstring(toUser.begin(), toUser.end()));
-	return ExecutePost(jsonObj);
+	return ExecutePost(jsonObj, "unbanAUser");
 }
 
-const bool Client::ExecutePost(const value &jsonObj)
+const bool Client::ExecutePost(const value &jsonObj,const string &funcName)
 {
 	try
 	{
-		value jsonRes = sendPostRequest(jsonObj).get();
+		value jsonRes = sendPostRequest(jsonObj, funcName).get();
 		if (jsonRes.has_field(U("ErrorRespond")))
 		{
 			return false;
@@ -117,9 +111,9 @@ void Client::Print(const value &json)const
 	wcout << L"From User: " << json.get(U("fromUser")).as_string() << L"->"<< json.get(U("message")).as_string();
 }
 
-pplx::task<value> Client::sendPostRequest(value jsonObj)
+pplx::task<value> Client::sendPostRequest(const value &jsonObj,const string &funcName)
 {
-	const uri serverURI = U("localhost");
+	const uri serverURI = U("localhost/") + wstring(funcName.begin(),funcName.end());
 	client::http_client client(serverURI);
 
 	// Manually build up an HTTP request with header and request URI.

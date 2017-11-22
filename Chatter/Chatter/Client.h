@@ -26,8 +26,8 @@ public:
 	const bool SendToAllUsers(const string &fromUser, const string &message) ;
 	const bool Ban(const string &fromUser, const string &toUser) ;
 	const bool Unban(const string &fromUser, const string &toUser) ;
-	const bool ExecutePost(const value &json) ;
+	const bool ExecutePost(const value &json ,const string&funcName) ;
 	void Print(const value &json) const;
-	pplx::task<value> sendPostRequest(value jsonObj);
+	pplx::task<value> sendPostRequest(const value &jsonObj ,const string &funcName);
 };
 
