@@ -1,10 +1,10 @@
 #include "Message.h"
 
-
-ServerNS::Message::Message(String from, String content) : m_timestamp(0)
+ServerNS::Message::Message(String from, String to, String content) : m_timestamp(0)
 {
 	m_from = from;
 	m_message = content;
+	m_to = to;
 }
 
 ServerNS::Message::~Message()
@@ -24,4 +24,14 @@ String ServerNS::Message::GetTimestamp() const
 	asctime_s(buff, 200, &t_tm);
 	std::string str(buff);
 	return String(std::wstring(str.begin(), str.end()));
+}
+
+String ServerNS::Message::GetFrom() const
+{
+	return m_from;
+}
+
+String ServerNS::Message::GetTo() const
+{
+	return m_to;
 }

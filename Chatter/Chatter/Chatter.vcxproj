@@ -99,7 +99,7 @@
     <ClCompile>
       <PrecompiledHeader>
       </PrecompiledHeader>
-      <WarningLevel>Level3</WarningLevel>
+      <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
@@ -148,14 +148,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp" />
-    <ClCompile Include="DirectMessage.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Message.cpp" />
+    <ClCompile Include="Server.cpp" />
     <ClCompile Include="User.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h" />
-    <ClInclude Include="DirectMessage.h" />
     <ClInclude Include="Message.h" />
     <ClInclude Include="Server.h" />
     <ClInclude Include="User.h" />
