@@ -1,6 +1,7 @@
 #include "Client.h"
 #include "cpprest\http_client.h"
 
+using namespace web::http;
 
 Client::Client()
 {
