@@ -4,11 +4,11 @@ Client::Client()
 {
 }
 
-
 Client::~Client()
 {
 }
 
+<<<<<<< HEAD
 string Client::getUsername()
 {
 	return m_username;
@@ -30,65 +30,118 @@ bool Client::Login()
 	jsonObj[L"username"] = value::string(wstring(getUsername().begin(), getUsername().end()));
 	jsonObj[L"password"] = value::string(wstring(m_password.begin(), m_password.end()));
 	return ExecutePost(jsonObj);
+=======
+const bool Client::Login(const string &username, const string &password)
+{
+	value jsonObj;
+	jsonObj[L"username"] = value::string(wstring(username.begin(), username.end()));
+	jsonObj[L"password"] = value::string(wstring(password.begin(), password.end()));
+	return ExecutePost(jsonObj, "Login");
+>>>>>>> a9a0ceb0c228f5e67c7972dab5574c2c50e889de
 }
 
 void Client::GetActiveUsers()
 {
+<<<<<<< HEAD
 	
+=======
+	value jsonObj;
+	
+	try
+	{
+		value jsonRes = sendPostRequest(jsonObj,"GetActiveUsers").get();
+		if (!jsonRes.has_field(U("ErrorRespond")))
+		{
+			Print(jsonRes);
+		}
+	}
+	catch (const std::exception& e)
+	{
+		cout << e.what() << '\n';
+	}	
+>>>>>>> a9a0ceb0c228f5e67c7972dab5574c2c50e889de
 }
 
-string Client::GetMessage(string fromUser)
+void Client::GetMessage(const string &fromUser)
 {
-	return string();
+	value jsonObj;
+	jsonObj[L"fromUser"] = value::string(wstring(fromUser.begin(), fromUser.end()));
+	while (true)
+	{
+		try
+		{
+			value jsonRes = sendPostRequest(jsonObj, "GetMessage").get();
+			if (!jsonRes.has_field(U("ErrorRespond")))
+			{
+				Print(jsonRes);
+			}
+		}
+		catch (const std::exception& e)
+		{
+			cout << e.what() << '\n';
+		}				
+		std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+	}
 }
 
-bool Client::Send(string fromUser, string toUser, string message)
+const bool Client::Send(const string &fromUser, const string &toUser, const string &message)
 {
 	value jsonObj;
 	jsonObj[ L"fromUser" ] = value::string(wstring(fromUser.begin(), fromUser.end()));
 	jsonObj[ L"toUser" ] = value::string(wstring(toUser.begin(), toUser.end()));
 	jsonObj[ L"message" ] = value::string(wstring(message.begin(), message.end()));
-	return ExecutePost(jsonObj);
-	
+	return ExecutePost(jsonObj, "Send");
 }
 
-bool Client::SendAll()
+const bool Client::SendToAllUsers(const string &fromUser, const string &message)
 {
-	return false;
+	value jsonObj;
+	jsonObj[L"fromUser"] = value::string(wstring(fromUser.begin(), fromUser.end()));
+	jsonObj[L"message"] = value::string(wstring(message.begin(), message.end()));
+	return ExecutePost(jsonObj, "SendToAllUsers");
 }
 
-bool Client::Ban(string username)
+const bool Client::Ban(const string &fromUser, const string &toUser)
 {
-	return false;
+	value jsonObj;
+	jsonObj[L"fromUser"] = value::string(wstring(fromUser.begin(), fromUser.end()));
+	jsonObj[L"toUser"] = value::string(wstring(toUser.begin(), toUser.end()));
+	return ExecutePost(jsonObj, "banAUser");
 }
 
-bool Client::Unban(string username)
+const bool Client::Unban(const string &fromUser, const string &toUser)
 {
-	return false;
+	value jsonObj;
+	jsonObj[L"fromUser"] = value::string(wstring(fromUser.begin(), fromUser.end()));
+	jsonObj[L"toUser"] = value::string(wstring(toUser.begin(), toUser.end()));
+	return ExecutePost(jsonObj, "unbanAUser");
 }
 
-bool Client::ExecutePost(value jsonObj)
+const bool Client::ExecutePost(const value &jsonObj,const string &funcName)
 {
 	try
 	{
-		value jsonRes = sendPostRequest(jsonObj).get();
+		value jsonRes = sendPostRequest(jsonObj, funcName).get();
 		if (jsonRes.has_field(U("ErrorRespond")))
 		{
 			return false;
 		}
-
 	}
 	catch (const std::exception&)
 	{
 		return false;
 	}
-
 	return true;
 }
 
-pplx::task<value> Client::sendPostRequest(value jsonObj)
+void Client::Print(const value &json)const
 {
-	const uri serverURI = U("localhost");
+	wcout << L"From User: " << json.get(U("fromUser")).as_string() << L"->"<< json.get(U("message")).as_string();
+}
+
+pplx::task<value> Client::sendPostRequest(const value &jsonObj,const string &funcName)
+{
+	const uri serverURI = U("localhost/") + wstring(funcName.begin(),funcName.end());
 	client::http_client client(serverURI);
 
 	// Manually build up an HTTP request with header and request URI.
