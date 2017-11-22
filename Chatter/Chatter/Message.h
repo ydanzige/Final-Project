@@ -1,5 +1,7 @@
 #include <string>
 #include <ctime>
+#include <time.h>
+#include <stdio.h>
 
 #define String std::string
 

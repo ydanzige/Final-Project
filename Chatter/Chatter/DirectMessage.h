@@ -1,7 +1,7 @@
 #pragma once
 #include "Message.h"
 
-namespace Server 
+namespace ServerNS 
 {
 	class DirectMessage : public Message
 	{

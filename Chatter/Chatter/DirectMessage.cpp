@@ -1,14 +1,14 @@
 #include "DirectMessage.h"
 
-Server::DirectMessage::DirectMessage()
+ServerNS::DirectMessage::DirectMessage()
 {
 }
 
-Server::DirectMessage::~DirectMessage()
+ServerNS::DirectMessage::~DirectMessage()
 {
 }
 
-bool Server::DirectMessage::SendToUser(String toUser)
+bool ServerNS::DirectMessage::SendToUser(String toUser)
 {
 	return m_to.compare(toUser) == 0;
 }

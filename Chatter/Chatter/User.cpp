@@ -14,6 +14,7 @@ bool ServerNS::User::SetPassword(String newPassword)
 {
 	// Todo: check for password restrictions
 	this->m_pass.assign(newPassword);
+	return true;
 }
 
 String ServerNS::User::GetUsername() const

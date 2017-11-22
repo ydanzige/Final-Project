@@ -1,19 +1,23 @@
 #include "Message.h"
 
-Server::Message::Message():m_timestamp(0)
+ServerNS::Message::Message():m_timestamp(0)
 {
 }
 
-Server::Message::~Message()
+ServerNS::Message::~Message()
 {
 }
 
-String Server::Message::GetContent() const
+String ServerNS::Message::GetContent() const
 {
 	return this->m_message;
 }
 
-String Server::Message::GetTimestamp() const
+String ServerNS::Message::GetTimestamp() const
 {
-	return std::asctime(std::localtime(&m_timestamp));
+	char buff[200];
+	tm t_tm;
+	localtime_s(&t_tm, &m_timestamp);
+	asctime_s(buff, 200, &t_tm);
+	return String(buff);
 }

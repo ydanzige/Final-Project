@@ -25,8 +25,7 @@ enum REQUEST_ID
 class Server
 {
 public:
-	Server()
-	{}
+	Server();
 	Server(utility::string_t url);
 	~Server();
 
@@ -42,6 +41,13 @@ private:
 	//
 	void handle_post(http_request message);
 	bool HandleLogin(http_request message);
+	bool HandleGetActiveUser(http_request message);
+	bool HandleSendMessages(http_request message);
+	bool HandleGetMessages(http_request message);
+	bool HandleSendToAllUsers(http_request message);
+	bool HandleBanUser(http_request message);
+	bool HandleUnanUser(http_request message);
+	REQUEST_ID getId(web::uri);
 };
 
 Server::Server()
@@ -88,11 +94,50 @@ void Server::handle_post(http_request message)
 	}
 }
 
-inline bool Server::HandleLogin(http_request message)
+REQUEST_ID Server::getId(web::uri)
+{
+	return LOGIN;
+}
+
+bool Server::HandleLogin(http_request message)
 {
 	auto body = message.extract_json().get();
 	web::json::value username = body[L"username"];
 	web::json::value password = body[L"password"];
 	m_usrlst.push_back(std::unique_ptr<User>(new User(username.as_string(), password.as_string())));
+	return true;
+}
+
+bool Server::HandleGetActiveUser(http_request message)
+{
+	web::json::value obj;
+	web::json::value arr;
+	std::vector<web::json::value> users;
+	for (int i = 0; i < m_usrlst.size(); i++)
+	{
+		users.push_back(web::json::value(m_usrlst[i]->GetUsername()));
+	}
+	arr.array(users);
+	return true;
+}
+
+bool Server::HandleSendMessages(http_request message)
+{
+	return true;
+}
+bool Server::HandleGetMessages(http_request message)
+{
+	return true;
+}
+bool Server::HandleSendToAllUsers(http_request message)
+{
+	return true;
+}
+bool Server::HandleBanUser(http_request message)
+{
+	return true;
+}
+bool Server::HandleUnanUser(http_request message)
+{
 	return true;
 }
