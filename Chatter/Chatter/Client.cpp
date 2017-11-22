@@ -9,17 +9,32 @@ Client::~Client()
 {
 }
 
-bool Client::Login(string username, string password)
+string Client::getUsername()
+{
+	return m_username;
+}
+
+void Client::setUsername(string username)
+{
+	m_username = username;
+}
+
+void Client::setPassword(string password)
+{
+	m_password = password;
+}
+
+bool Client::Login()
 {
 	value jsonObj;
-	jsonObj[L"username"] = value::string(wstring(username.begin(), username.end()));
-	jsonObj[L"password"] = value::string(wstring(password.begin(), password.end()));
+	jsonObj[L"username"] = value::string(wstring(getUsername().begin(), getUsername().end()));
+	jsonObj[L"password"] = value::string(wstring(m_password.begin(), m_password.end()));
 	return ExecutePost(jsonObj);
 }
 
-string Client::GetActiveUsers()
+void Client::GetActiveUsers()
 {
-	return string();
+	
 }
 
 string Client::GetMessage(string fromUser)

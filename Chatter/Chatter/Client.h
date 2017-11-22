@@ -19,8 +19,11 @@ public:
 	Client();
 	~Client();
 
-	bool Login(string username, string password);
-	string GetActiveUsers();	
+	string getUsername();
+	void setUsername(string username);
+	void setPassword(string username);
+	bool Login();
+	void GetActiveUsers();	
 	string GetMessage(string fromUser);	
 	bool Send(string fromUser, string toUser, string message);
 	bool SendAll();	
