@@ -85,9 +85,13 @@ REQUEST_ID Server::getId(web::uri uri)
 
 http_response Server::HandleLogin(http_request message)
 {
-	auto body = message.extract_json().get();
-	web::json::value username = body[L"username"];
-	web::json::value password = body[L"password"];
+	web::json::value username;
+	web::json::value password;
+	message.extract_json().then([&](pplx::task<json::value> previousTask) {
+		auto body = previousTask.get();
+		username = body[L"username"];
+		password = body[L"password"];
+	}).wait();
 	m_usrlst.push_back(std::unique_ptr<ServerNS::User>(new ServerNS::User(username.as_string(), password.as_string())));
 	http_response res(200);
 	return res;
@@ -110,10 +114,15 @@ http_response Server::HandleGetActiveUser(http_request message)
 
 http_response Server::HandleSendMessages(http_request message)
 {
-	auto body = message.extract_json().get();
-	web::json::value fromusername = body[L"fromusername"];
-	web::json::value tousername = body[L"tousername"];
-	web::json::value massege = body[L"massege"];
+	web::json::value fromusername;
+	web::json::value tousername;
+	web::json::value massege;
+	message.extract_json().then([&](pplx::task<json::value> previousTask) {
+		auto body = previousTask.get();
+		fromusername = body[L"fromusername"];
+		tousername = body[L"tousername"];
+		massege = body[L"massege"];
+	}).wait();
 	http_response res;
 	bool success = AddMsgToLst(fromusername.as_string(), tousername.as_string(), massege.as_string());
 	if (success)
@@ -130,9 +139,12 @@ http_response Server::HandleSendMessages(http_request message)
 
 http_response Server::HandleGetMessages(http_request message)
 {
-	auto body = message.extract_json().get();
-	web::json::value username = body[L"username"];
-
+	web::json::value username;
+	message.extract_json().then([&](pplx::task<json::value> previousTask) {
+		auto body = previousTask.get();
+		username = body[L"username"];
+	}).wait();
+	
 	web::json::value arr;
 	std::vector<web::json::value> masseges;
 
@@ -151,9 +163,13 @@ http_response Server::HandleGetMessages(http_request message)
 
 http_response Server::HandleSendToAllUsers(http_request message)
 {
-	auto body = message.extract_json().get();
-	web::json::value fromusername = body[L"fromusername"];
-	web::json::value massege = body[L"massege"];
+	web::json::value fromusername;
+	web::json::value massege;
+	message.extract_json().then([&](pplx::task<json::value> previousTask) {
+		auto body = previousTask.get();
+		fromusername = body[L"fromusername"];
+		massege = body[L"massege"];
+	}).wait();
 	for (size_t i = 0; i < m_usrlst.size(); i++)
 	{
 		AddMsgToLst(fromusername.as_string(), m_usrlst[i]->GetUsername(), massege.as_string());
@@ -163,9 +179,13 @@ http_response Server::HandleSendToAllUsers(http_request message)
 
 http_response Server::HandleBanUser(http_request message)
 {
-	auto body = message.extract_json().get();
-	web::json::value fromusername = body[L"fromusername"];
-	web::json::value banusername = body[L"banusername"];
+	web::json::value fromusername;
+	web::json::value banusername;
+	message.extract_json().then([&](pplx::task<json::value> previousTask) {
+		auto body = previousTask.get();
+		fromusername = body[L"fromusername"];
+		banusername = body[L"banusername"];
+	}).wait();
 
 	for (size_t i = 0; i < m_usrlst.size(); i++)
 	{
@@ -180,9 +200,14 @@ http_response Server::HandleBanUser(http_request message)
 
 http_response Server::HandleUnanUser(http_request message)
 {
-	auto body = message.extract_json().get();
-	web::json::value fromusername = body[L"fromusername"];
-	web::json::value unbanusername = body[L"unbanusername"];
+	web::json::value fromusername;
+	web::json::value unbanusername;
+	message.extract_json().then([&](pplx::task<json::value> previousTask) {
+		auto body = previousTask.get();
+		fromusername = body[L"fromusername"];
+		unbanusername = body[L"unbanusername"];
+	}).wait();
+
 
 	for (size_t i = 0; i < m_usrlst.size(); i++)
 	{
