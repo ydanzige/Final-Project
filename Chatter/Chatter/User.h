@@ -1,6 +1,7 @@
 #include <cpprest\asyncrt_utils.h>
 #include <string>
 #include <vector>
+
 using namespace utility;
 #define String utility::string_t 
 #define Vector std::vector 
