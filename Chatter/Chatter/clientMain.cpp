@@ -30,6 +30,8 @@ int clientMain()
 			cout << "Incorrect username or password\n";
 	} while (!isConnected);
 
+	thread retrieve(Client::GetMessage, client.getUsername());
+	
 	cout << "Enter Action(1-6):\n1)Get List of active users\n2)Start chat\n3)Send message to all users\n4)block a user\n5)unblock a user\n6)exit";
 	while (!exit)
 	{

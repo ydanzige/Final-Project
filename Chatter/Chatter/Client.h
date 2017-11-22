@@ -24,7 +24,7 @@ public:
 	void setPassword(string username);
 	const bool Login();
 	void GetActiveUsers();
-	void GetMessage(const string &fromUser);
+	static void GetMessage(const string &fromUser);
 	const bool Send(const string &fromUser, const string &toUser, const string &message);
 	const bool SendToAllUsers(const string &fromUser, const string &message);
 	const bool Ban(const string &fromUser, const string &toUser);
