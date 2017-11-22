@@ -1,26 +1,45 @@
 #include "Server.h"
+#include "Server.h"
+#include "User.h"
+#include "Message.h"
 
-std::unique_ptr<Server> g_httpDealer;
+std::vector<std::unique_ptr<Server>> g_srvlst;
+std::vector<utility::string_t> g_urls{
+	U("login"),
+	U("getActiveUser"),
+	U("sendMessage"),
+	U("getMessage"),
+	U("sendToAllUsers"),
+	U("banAUser"),
+	U("unbanAUser")
+};
 
 void on_initialize(const string_t& address)
 {
 	// Build our listener's URI from the configured address and the hard-coded path "blackjack/dealer"
+	uri_builder base(address);
 
-	uri_builder uri(address);
-	uri.append_path(U("blackjack/dealer"));
+	for (size_t i = 0; i < g_urls.size(); i++)
+	{
+		uri_builder uri(base);
+		uri.append_path(g_urls[i]);
 
-	auto addr = uri.to_uri().to_string();
-	g_httpDealer = std::unique_ptr<Server>(new Server(addr));
-	g_httpDealer->open().wait();
+		auto addr = uri.to_uri().to_string();
+		g_srvlst.push_back(std::unique_ptr<Server>(new Server(addr)));
+		g_srvlst[i]->open().wait();
+	}
 
-	ucout << utility::string_t(U("Listening for requests at: ")) << addr << std::endl;
+	ucout << utility::string_t(U("Listening for requests at: ")) << base.to_uri().to_string() << std::endl;
 
 	return;
 }
 
 void on_shutdown()
 {
-	g_httpDealer->close().wait();
+	for (size_t i = 0; i < g_urls.size(); i++)
+	{
+		g_srvlst[i]->close().wait();
+	}
 	return;
 }
 
