@@ -1,10 +1,11 @@
+#include <cpprest\asyncrt_utils.h>
 #include <string>
 #include <vector>
-
-#define String std::string 
+using namespace utility;
+#define String utility::string_t 
 #define Vector std::vector 
 
-namespace Server
+namespace ServerNS
 {
 	/**
 	Contains user details and bun list of usernames 

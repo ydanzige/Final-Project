@@ -3,7 +3,7 @@
 
 #define String std::string
 
-namespace Server
+namespace ServerNS
 {
 	class Message
 	{
