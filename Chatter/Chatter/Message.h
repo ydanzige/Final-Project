@@ -5,11 +5,17 @@
 
 namespace ServerNS
 {
+	/**
+	Contains message details
+	*/
 	class Message
 	{
 	public:
 		Message();
 		~Message();
+
+		String GetContent() const;
+		String GetTimestamp() const;
 	private:
 		String m_message;
 		String m_from;
