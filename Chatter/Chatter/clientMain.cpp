@@ -8,9 +8,11 @@ using namespace std;
 int clientMain()
 {
 	Client client;
-	bool isConnected;
-	string input;
-	int action;
+	bool isConnected = false;
+	string input = "";
+	int action = 0;
+	string userTo = "";
+	string message = "";
 	bool exit = false;
 
 	do
@@ -38,10 +40,7 @@ int clientMain()
 				client.GetActiveUsers();
 				break;
 			case 2:
-				string userTo;
-				string message;
-
-				cout << "Enter user to chat with: ";
+                cout << "Enter user to chat with: ";
 				cin >> userTo;
 				cout << "attempting to start chat with: " + input<<endl;
 				cout << "Enter message to send: ";

@@ -8,7 +8,6 @@ Client::~Client()
 {
 }
 
-<<<<<<< HEAD
 string Client::getUsername()
 {
 	return m_username;
@@ -24,27 +23,18 @@ void Client::setPassword(string password)
 	m_password = password;
 }
 
-bool Client::Login()
+
+const bool Client::Login()
 {
 	value jsonObj;
 	jsonObj[L"username"] = value::string(wstring(getUsername().begin(), getUsername().end()));
 	jsonObj[L"password"] = value::string(wstring(m_password.begin(), m_password.end()));
-	return ExecutePost(jsonObj);
-=======
-const bool Client::Login(const string &username, const string &password)
-{
-	value jsonObj;
-	jsonObj[L"username"] = value::string(wstring(username.begin(), username.end()));
-	jsonObj[L"password"] = value::string(wstring(password.begin(), password.end()));
 	return ExecutePost(jsonObj, "Login");
->>>>>>> a9a0ceb0c228f5e67c7972dab5574c2c50e889de
+
 }
 
 void Client::GetActiveUsers()
 {
-<<<<<<< HEAD
-	
-=======
 	value jsonObj;
 	
 	try
@@ -59,7 +49,6 @@ void Client::GetActiveUsers()
 	{
 		cout << e.what() << '\n';
 	}	
->>>>>>> a9a0ceb0c228f5e67c7972dab5574c2c50e889de
 }
 
 void Client::GetMessage(const string &fromUser)
@@ -136,7 +125,7 @@ const bool Client::ExecutePost(const value &jsonObj,const string &funcName)
 
 void Client::Print(const value &json)const
 {
-	wcout << L"From User: " << json.get(U("fromUser")).as_string() << L"->"<< json.get(U("message")).as_string();
+	wcout << L"From User: " << json.at(U("fromUser")).as_string() << L"->"<< json.at(U("message")).as_string();
 }
 
 pplx::task<value> Client::sendPostRequest(const value &jsonObj,const string &funcName)
@@ -166,3 +155,4 @@ pplx::task<value> Client::sendPostRequest(const value &jsonObj,const string &fun
 		return pplx::task_from_result(jsonObj);
 	});
 }
+
