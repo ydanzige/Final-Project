@@ -1,4 +1,7 @@
 #include <string>
+#include <ctime>
+
+#define String std::string
 
 namespace Server
 {
@@ -8,7 +11,8 @@ namespace Server
 		Message();
 		~Message();
 	private:
-		std::string m_message;
-		std::string m_from;
+		String m_message;
+		String m_from;
+		time_t m_timestamp;
 	};
 }
