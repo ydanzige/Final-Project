@@ -4,55 +4,98 @@ Client::Client()
 {
 }
 
-
 Client::~Client()
 {
 }
 
-bool Client::Login(string username, string password)
+const bool Client::Login(const string &username, const string &password)
 {
 	value jsonObj;
+	jsonObj[L"functionName"] = value::string(U("Login"));
 	jsonObj[L"username"] = value::string(wstring(username.begin(), username.end()));
 	jsonObj[L"password"] = value::string(wstring(password.begin(), password.end()));
 	return ExecutePost(jsonObj);
 }
 
-string Client::GetActiveUsers()
-{
-	return string();
-}
-
-string Client::GetMessage(string fromUser)
-{
-	return string();
-}
-
-bool Client::Send(string fromUser, string toUser, string message)
+void Client::GetActiveUsers()
 {
 	value jsonObj;
+	jsonObj[L"functionName"] = value::string(U("GetActiveUsers"));	
+	try
+	{
+		value jsonRes = sendPostRequest(jsonObj).get();
+		if (!jsonRes.has_field(U("ErrorRespond")))
+		{
+			Print(jsonRes);
+		}
+	}
+	catch (const std::exception& e)
+	{
+		cout << e.what() << '\n';
+	}	
+}
+
+void Client::GetMessage(const string &fromUser)
+{
+	value jsonObj;
+	jsonObj[L"functionName"] = value::string(U("GetMessage"));
+	jsonObj[L"fromUser"] = value::string(wstring(fromUser.begin(), fromUser.end()));
+	while (true)
+	{
+		try
+		{
+			value jsonRes = sendPostRequest(jsonObj).get();
+			if (!jsonRes.has_field(U("ErrorRespond")))
+			{
+				Print(jsonRes);
+			}
+		}
+		catch (const std::exception& e)
+		{
+			cout << e.what() << '\n';
+		}				
+		std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+	}
+}
+
+const bool Client::Send(const string &fromUser, const string &toUser, const string &message)
+{
+	value jsonObj;
+	jsonObj[L"functionName"] = value::string(U("Send"));
 	jsonObj[ L"fromUser" ] = value::string(wstring(fromUser.begin(), fromUser.end()));
 	jsonObj[ L"toUser" ] = value::string(wstring(toUser.begin(), toUser.end()));
 	jsonObj[ L"message" ] = value::string(wstring(message.begin(), message.end()));
+	return ExecutePost(jsonObj);	
+}
+
+const bool Client::SendToAllUsers(const string &fromUser, const string &message)
+{
+	value jsonObj;
+	jsonObj[L"functionName"] = value::string(U("SendToAllUsers"));
+	jsonObj[L"fromUser"] = value::string(wstring(fromUser.begin(), fromUser.end()));
+	jsonObj[L"message"] = value::string(wstring(message.begin(), message.end()));
 	return ExecutePost(jsonObj);
-	
 }
 
-bool Client::SendAll()
+const bool Client::Ban(const string &fromUser, const string &toUser)
 {
-	return false;
+	value jsonObj;
+	jsonObj[L"functionName"] = value::string(U("banAUser"));
+	jsonObj[L"fromUser"] = value::string(wstring(fromUser.begin(), fromUser.end()));
+	jsonObj[L"toUser"] = value::string(wstring(toUser.begin(), toUser.end()));
+	return ExecutePost(jsonObj);
 }
 
-bool Client::Ban(string username)
+const bool Client::Unban(const string &fromUser, const string &toUser)
 {
-	return false;
+	value jsonObj;
+	jsonObj[L"functionName"] = value::string(U("unbanAUser"));
+	jsonObj[L"fromUser"] = value::string(wstring(fromUser.begin(), fromUser.end()));
+	jsonObj[L"toUser"] = value::string(wstring(toUser.begin(), toUser.end()));
+	return ExecutePost(jsonObj);
 }
 
-bool Client::Unban(string username)
-{
-	return false;
-}
-
-bool Client::ExecutePost(value jsonObj)
+const bool Client::ExecutePost(const value &jsonObj)
 {
 	try
 	{
@@ -61,14 +104,17 @@ bool Client::ExecutePost(value jsonObj)
 		{
 			return false;
 		}
-
 	}
 	catch (const std::exception&)
 	{
 		return false;
 	}
-
 	return true;
+}
+
+void Client::Print(const value &json)const
+{
+	wcout << L"From User: " << json.get(U("fromUser")).as_string() << L"->"<< json.get(U("message")).as_string();
 }
 
 pplx::task<value> Client::sendPostRequest(value jsonObj)
