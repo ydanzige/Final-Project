@@ -1,7 +1,6 @@
 #pragma once
 #include "stdafx.h"
 
-using namespace utility;
 #define String utility::string_t 
 
 namespace Server

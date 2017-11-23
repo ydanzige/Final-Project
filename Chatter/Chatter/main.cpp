@@ -13,7 +13,9 @@ const Vector<string_t> g_urls
 	U("unbanAUser")
 };
 
-Vector<unique_ptr<Server::HttpServer>> g_srvlst;
+Vector<unique_ptr<Server::HttpController>> g_srvlst;
+unordered_map<utility::string_t, unique_ptr<User>> g_users;
+Vector<unique_ptr<Message>> g_messages;
 
 void InitializeServer(const string_t& address)
 {
@@ -26,7 +28,7 @@ void InitializeServer(const string_t& address)
 		uri.append_path(g_urls[i]);
 
 		auto addr = uri.to_uri().to_string();
-		g_srvlst.push_back(unique_ptr<Server::HttpServer>(new Server::HttpServer(addr)));
+		g_srvlst.push_back(unique_ptr<Server::HttpController>(new Server::HttpController(addr, g_users, g_messages)));
 		g_srvlst[i]->open().wait();
 	}
 

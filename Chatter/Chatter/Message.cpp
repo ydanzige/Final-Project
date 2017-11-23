@@ -1,11 +1,8 @@
 #include "Message.h"
 
-Server::Message::Message(String from, String to, String content) : m_timestamp(0)
-{
-	m_from = from;
-	m_message = content;
-	m_to = to;
-}
+Server::Message::Message(String from, String to, String content) 
+	:m_from(from), m_to(to), m_message(content), m_timestamp(0)
+{}
 
 Server::Message::~Message()
 {
