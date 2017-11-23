@@ -1,7 +1,9 @@
+#include "stdafx.h"
 #include "Server.h"
 
-std::vector<std::unique_ptr<Server>> g_srvlst;
-std::vector<utility::string_t> g_urls{
+const string_t DEFAULT_PORT = L"34568";
+const Vector<string_t> g_urls
+{
 	U("login"),
 	U("getActiveUser"),
 	U("sendMessage"),
@@ -11,7 +13,9 @@ std::vector<utility::string_t> g_urls{
 	U("unbanAUser")
 };
 
-void on_initialize(const string_t& address)
+Vector<unique_ptr<Server::HttpServer>> g_srvlst;
+
+void InitializeServer(const string_t& address)
 {
 	// Build our listener's URI from the configured address and the hard-coded path "blackjack/dealer"
 	uri_builder base(address);
@@ -22,16 +26,16 @@ void on_initialize(const string_t& address)
 		uri.append_path(g_urls[i]);
 
 		auto addr = uri.to_uri().to_string();
-		g_srvlst.push_back(std::unique_ptr<Server>(new Server(addr)));
+		g_srvlst.push_back(unique_ptr<Server::HttpServer>(new Server::HttpServer(addr)));
 		g_srvlst[i]->open().wait();
 	}
 
-	ucout << utility::string_t(U("Listening for requests at: ")) << base.to_uri().to_string() << std::endl;
+	ucout << string_t(U("Listening for requests at: ")) << base.to_uri().to_string() << std::endl;
 
 	return;
 }
 
-void on_shutdown()
+void ShutdownServer()
 {
 	for (size_t i = 0; i < g_urls.size(); i++)
 	{
@@ -40,20 +44,24 @@ void on_shutdown()
 	return;
 }
 
-
-int main(void)
+inline void WaitForExit()
 {
-	utility::string_t port = U("34568");
+	cout << "Press ENTER to exit..." << std::endl;
+	string line;
+	getline( std::cin, line );
+}
 
-	utility::string_t address = U("http://localhost:");
+int wmain( int argc, wchar_t * argv[] )
+{
+	string_t port = argc < 2 ? DEFAULT_PORT : argv[ 1 ];
+
+	string_t address = U("http://localhost:");
 	address.append(port);
 
-	on_initialize(address);
-	std::cout << "Press ENTER to exit." << std::endl;
+	InitializeServer(address);
+	
+	WaitForExit();
 
-	std::string line;
-	std::getline(std::cin, line);
-
-	on_shutdown();
+	ShutdownServer();
 	return 0;
 }

@@ -1,13 +1,11 @@
 #pragma once
-#include <cpprest\asyncrt_utils.h>
-#include <string>
-#include <vector>
+#include "stdafx.h"
 
 using namespace utility;
 #define String utility::string_t 
 #define Vector std::vector 
 
-namespace ServerNS
+namespace Server
 {
 	/**
 	Contains user details and bun list of usernames 

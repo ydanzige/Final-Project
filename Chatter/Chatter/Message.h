@@ -1,14 +1,10 @@
 #pragma once
-#include <cpprest\asyncrt_utils.h>
-#include <string>
-#include <ctime>
-#include <time.h>
-#include <stdio.h>
+#include "stdafx.h"
 
 using namespace utility;
 #define String utility::string_t 
 
-namespace ServerNS
+namespace Server
 {
 	/**
 	Contains message details

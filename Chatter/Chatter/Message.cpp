@@ -1,22 +1,22 @@
 #include "Message.h"
 
-ServerNS::Message::Message(String from, String to, String content) : m_timestamp(0)
+Server::Message::Message(String from, String to, String content) : m_timestamp(0)
 {
 	m_from = from;
 	m_message = content;
 	m_to = to;
 }
 
-ServerNS::Message::~Message()
+Server::Message::~Message()
 {
 }
 
-String ServerNS::Message::GetContent() const
+String Server::Message::GetContent() const
 {
 	return this->m_message;
 }
 
-String ServerNS::Message::GetTimestamp() const
+String Server::Message::GetTimestamp() const
 {
 	char buff[200];
 	tm t_tm;
@@ -26,12 +26,12 @@ String ServerNS::Message::GetTimestamp() const
 	return String(std::wstring(str.begin(), str.end()));
 }
 
-String ServerNS::Message::GetFrom() const
+String Server::Message::GetFrom() const
 {
 	return m_from;
 }
 
-String ServerNS::Message::GetTo() const
+String Server::Message::GetTo() const
 {
 	return m_to;
 }
